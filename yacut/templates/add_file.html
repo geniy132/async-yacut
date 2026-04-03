@@ -1,0 +1,61 @@
+{% extends "base.html" %} 
+{% block content %}
+  <main>
+    <section class="container my-5 px-4">
+      <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+      <p class="text-center my-4">
+        Создайте короткую ссылку автоматически или предложите свой вариант
+      </p>
+      <div class="container">
+        <div class="row my-3">
+          <div class="col-sm">
+          </div>
+          <div class="col-sm">
+            <form method="POST" enctype="multipart/form-data" novalidate>
+              {{ form.csrf_token }}
+              {{ form.files(class="form-control form-control-lg py-2 mb-3") }}<br />
+                {% if form.files.errors %}
+                  <p class="text-danger">
+                    {% for error in form.files.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </p>
+                {% endif %}
+              {{ form.submit(class="btn btn-primary") }}
+            </form>
+          </div>
+          <div class="col-sm">
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row ">
+          <div class="col-sm">
+          </div>
+          <div class="col-sm">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="alert alert-info py-2" role="alert">
+                    <div class="row align-items-center">
+                      <div class="col text-start text-break">
+                        <strong>{{ message.split('|')[0] }}</strong>
+                      </div>
+                      <div class="col-auto text-end">
+                        <a href="{{ message.split('|')[1] }}" target="_blank" class="text-decoration-none">
+                          {{ message.split('|')[1] }}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+          </div>
+          <div class="col-sm">
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}

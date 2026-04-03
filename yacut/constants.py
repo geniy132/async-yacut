@@ -1,0 +1,9 @@
+ALLOWED_CHARS = r'^[a-zA-Z0-9]*$'
+FORBIDDEN_IDS = {'files', }
+MAX_SHORT_ID_LEN = 16
+RANDOM_ID_LEN = 6
+ERROR_INVALID_NAME = 'Указано недопустимое имя для короткой ссылки'
+ERROR_ALREADY_EXISTS = 'Предложенный вариант короткой ссылки уже существует.'
+ERROR_REQUIRED_URL = '"url" является обязательным полем'
+API_HOST = 'https://cloud-api.yandex.net/'
+API_VERSION = 'v1'
