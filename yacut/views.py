@@ -2,7 +2,7 @@ import random
 import re
 import string
 
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for
 
 from . import app, db
 from .constants import (
@@ -32,16 +32,16 @@ def get_or_create_url(original, custom_id=None):
         is_invalid_format = not re.match(ALLOWED_CHARS, custom_id)
         is_too_long = len(custom_id) > MAX_SHORT_ID_LEN
         is_forbidden = custom_id in FORBIDDEN_IDS
-        if is_invalid_format or is_too_long or is_forbidden:
+        if is_invalid_format or is_too_long:
             raise InvalidAPIUsage(ERROR_INVALID_NAME)
-        if URLMap.query.filter_by(short=custom_id).first():
+        if URLMap.query.filter_by(short=custom_id).first() or is_forbidden:
             raise InvalidAPIUsage(ERROR_ALREADY_EXISTS)
         short_id = custom_id
     else:
+        existing = URLMap.query.filter_by(original=original).first()
+        if existing:
+            return existing, False
         short_id = generate_short_id()
-    existing = URLMap.query.filter_by(original=original).first()
-    if existing:
-        return existing, False
     url_map = URLMap(original=original, short=short_id)
     db.session.add(url_map)
     db.session.commit()
@@ -57,11 +57,8 @@ def index_view():
                 form.original_link.data,
                 form.custom_id.data
             )
-            prefix = (
-                'Ваша новая ссылка готова' if created
-                else 'Эта ссылка уже есть в базе'
-            )
-            flash(f'{prefix}: {request.host_url}{obj.short}')
+            if not created:
+                flash('Эта ссылка уже есть в базе')
             return render_template('urlmap.html', form=form, url=obj)
         except InvalidAPIUsage as e:
             flash(e.message)
@@ -74,7 +71,7 @@ def redirect_to_url(short):
     return redirect(url_map.original)
 
 
-@app.route('/file', methods=['GET', 'POST'])
+@app.route('/files', methods=['GET', 'POST'])
 async def add_file():
     form = FileUploadForm()
     if form.validate_on_submit():
@@ -84,5 +81,5 @@ async def add_file():
         urls = await upload_all_files(files_data)
         for url in urls:
             flash(str(url))
-        return redirect(url_for('add_file'))
+        return render_template('add_file.html', form=form)
     return render_template('add_file.html', form=form)

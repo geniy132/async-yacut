@@ -52,6 +52,14 @@
               {% endwith %}
             </h5>
             </p>
+            {% if url %}
+              <p class="text-center">
+                Ваша новая ссылка готова: 
+                <a href="{{ url_for('redirect_to_url', short=url.short, _external=True) }}">
+                  {{ url_for('redirect_to_url', short=url.short, _external=True) }}
+                </a>
+              </p>
+            {% endif %}
           </div>
           <div class="col-sm">
           </div>
