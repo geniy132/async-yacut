@@ -2,7 +2,7 @@ import random
 import re
 import string
 
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect
 
 from . import app, db
 from .constants import (
