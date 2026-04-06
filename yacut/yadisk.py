@@ -3,6 +3,7 @@ import asyncio
 import aiohttp
 
 from dotenv import load_dotenv
+from http import HTTPStatus
 
 from .constants import API_HOST, API_VERSION
 
@@ -22,19 +23,19 @@ async def upload_single_file(session, file_name, file_content):
     async with session.get(
         UPLOAD_LINK_URL, headers=AUTH_HEADERS, params=params
     ) as response:
-        if response.status != 200:
+        if response.status != HTTPStatus.OK:
             return f'Ошибка получения ссылки для {file_name}:{response.status}'
         data = await response.json()
         href = data.get('href')
 
     async with session.put(href, data=file_content) as upload_response:
-        if upload_response.status == 201:
+        if upload_response.status == HTTPStatus.CREATED:
             async with session.get(
                 DOWNLOAD_URL,
                 headers=AUTH_HEADERS,
                 params={'path': path}
             ) as download_response:
-                if download_response.status == 200:
+                if download_response.status == HTTPStatus.OK:
                     direct_url = (await download_response.json()).get('href')
                     obj, _ = get_or_create_url(direct_url)
                     return f'{file_name}|{obj.to_dict()["short_link"]}'

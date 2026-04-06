@@ -1,6 +1,9 @@
 ALLOWED_CHARS = r'^[a-zA-Z0-9]*$'
 FORBIDDEN_IDS = {'files', }
 MAX_SHORT_ID_LEN = 16
+MAX_SHORT_LEN = 128
+MAX_LINK_LEN = 256
+MIN_LINK_LEN = 1
 RANDOM_ID_LEN = 6
 ERROR_INVALID_NAME = 'Указано недопустимое имя для короткой ссылки'
 ERROR_ALREADY_EXISTS = 'Предложенный вариант короткой ссылки уже существует.'
